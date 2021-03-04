@@ -1,0 +1,24 @@
+{% extends "library/base.html" %}
+
+{% block content %}
+    <table class="table table-bordered table-hover table-striped table-responsive table-dark">
+    <thead class="border-bottom font-weight-bold">
+        <tr>
+            <td>BookName</td>
+            <td>Issue_Date</td>
+            <td>Due_Date</td>
+            <td>Return_Date</td>
+        </tr>
+    </thead>
+    <tbody>
+    {% for bookrecord in bookrecords %}
+        <tr>
+            <td>{{bookrecord.book}}</td>
+            <td>{{bookrecord.issue_date}}</td>
+            <td>{{bookrecord.due_date}}</td>
+            <td>{{bookrecord.return_date}}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock content %} 

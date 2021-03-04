@@ -1,0 +1,31 @@
+{% extends 'library/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<form action="" method="post" autocomplete="off" enctype="multipart/form-data">
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">
+    {% for error in form.non_field_errors %}
+        <p{% if forloop.last %} class="mb-0"{% endif %}>{{ error }}</p>
+    {% endfor %}
+    </div>
+    {% endif %}
+    {% csrf_token %}
+    {{form.title|as_crispy_field}}
+    {{form.author|as_crispy_field}}
+    {{form.category|as_crispy_field}}
+    {{form.book_img|as_crispy_field}}
+    {{form.total_copies_of_books|as_crispy_field}}
+    {{form.available_copies_of_books|as_crispy_field}}
+    <div class="row">
+        <div class="col-md-8">
+            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i>
+                Submit</button>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'bookindex' %}" class="btn btn-secondary btn-block btn-lg">
+                <i class="fas fa-stream"></i> Back to list
+            </a>
+        </div>
+    <br><br>
+</form>
+{% endblock %}

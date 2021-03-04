@@ -1,0 +1,49 @@
+{% extends "library/base.html" %}
+{% block content %}
+<table class="table table-bordered table-hover table-striped table-responsive table-dark">
+    <table class="table table-bordered table-hover table-striped table-responsive table-dark">
+        <thead class="border-bottom font-weight-bold">
+            <tr>
+                <td>Title</td>
+                <td>Author</td>
+                <td>Category</td>
+                <td>Book Img</td>
+                <td>Total books</td>
+                <td>Available books</td>
+                <td>
+                    <a href="{% url 'bookadd' %}" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-plus"></i> Add New
+                    </a>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for book in object_list %}
+            <tr>
+                <td>{{book.title}}</td>
+                <td>{{book.author}}</td>
+                <td>{{book.category}}</td>
+                <td><img style="width: 90px; height: 90px;" src="{{book.book_img.url}}" alt="{{ book.title }}"></td>
+                <td>{{book.total_copies_of_books}}</td>
+                <td>{{book.available_copies_of_books}}</td>
+                <td>{% if user.is_superuser %}
+                    <a href="{% url 'bookupdate' book.id %}" class="btn text-warning px-2">
+                        <i class="far fa-edit fa-lg"></i>
+                    </a>
+                    <form action="{% url 'bookdelete' book.id %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn">
+                            <i class="far fa-trash-alt fa-lg text-danger float-right"></i>
+                        </button>
+                    </form>
+                    {% else %}
+                    <a href="{% url 'bookissued' book.id %}" class="btn text-warning px-2">
+                        <i class="icon-book"></i>
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}

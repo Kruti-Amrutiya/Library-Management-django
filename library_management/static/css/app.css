@@ -1,0 +1,9 @@
+.navbar-brand {
+    font-family: 'Potta One', cursive;
+}
+.bs-example{
+    margin: 0px;
+}
+.navbar a {
+    float: right;
+}
