@@ -1,0 +1,44 @@
+{% extends "library/base.html" %}
+{% block content %}
+<table class="table table-bordered table-hover table-striped table-responsive table-dark">
+    <table class="table table-bordered table-hover table-striped table-responsive table-dark">
+        <thead class="border-bottom font-weight-bold">
+            <tr>
+                <td>UserName</td>
+                <td>First_Name</td>
+                <td>Last_Name</td>
+                <td>Profile_img</td>
+                <td>Phone_num</td>
+                <td>Address</td>
+                <td>Role</td>
+                <td><a href="{% url 'adminprofile' %}" class="btn btn-outline-success btn-sm">Back</a></td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for librarian in librarians %}
+            <tr>
+                <td><a href="{% url 'librariandetail' librarian.id %}">{{librarian.username}}</a></td>
+                <td>{{librarian.first_name}}</td>
+                <td>{{librarian.last_name}}</td>
+                <td><img style="width: 90px; height: 90px;" src="{{librarian.profile_img.url}}" alt="profile img"></td>
+                <td>{{librarian.phone_num}}</td>
+                <td>{{librarian.address}}</td>
+                <td>{{librarian.role}}</td>
+                <td>
+                    {% if user.is_superuser %}
+                        <a href="{% url 'librarianupdate' librarian.id %}" class="btn text-warning px-2">
+                            <i class="far fa-edit fa-lg"></i>
+                        </a>
+                    <form action="{% url 'librariandelete' librarian.id %}" method="POST" class="d-inline">
+                    {% csrf_token %}
+                        <button type="submit" class="btn">
+                            <i class="far fa-trash-alt fa-lg text-danger float-right"></i>
+                        </button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}

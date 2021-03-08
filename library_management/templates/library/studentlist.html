@@ -1,0 +1,48 @@
+{% extends "library/base.html" %}
+{% block content %}
+<table class="table table-bordered table-hover table-striped table-responsive table-dark">
+    <table class="table table-bordered table-hover table-striped table-responsive table-dark">
+        <thead class="border-bottom font-weight-bold">
+            <tr>
+                <td>UserName</td>
+                <td>First_Name</td>
+                <td>Last_Name</td>
+                <td>Profile_img</td>
+                <td>Phone_num</td>
+                <td>Address</td>
+                <td>Department</td>
+                <td>Role</td>
+                <td>
+                    <a href="{% url 'adminprofile' %}" class="btn btn-outline-success btn-sm">Back</a>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for student in students %}
+            <tr>
+                <td><a href="{% url 'studentdetail' student.id %}">{{student.username}}</a></td>
+                <td>{{student.first_name}}</td>
+                <td>{{student.last_name}}</td>
+                <td><img style="width: 90px; height: 90px;" src="{{student.profile_img.url}}" alt="profile img"></td>
+                <td>{{student.phone_num}}</td>
+                <td>{{student.address}}</td>
+                <td>{{student.department}}</td>
+                <td>{{student.role}}</td>
+                <td>
+                    {% if user.is_superuser %}
+                        <a href="{% url 'studentupdate' student.id %}" class="btn text-warning px-2">
+                            <i class="far fa-edit fa-lg"></i>
+                        </a>
+                    <form action="{% url 'studentdelete' student.id %}" method="POST" class="d-inline">
+                    {% csrf_token %}
+                        <button type="submit" class="btn">
+                            <i class="far fa-trash-alt fa-lg text-danger float-right"></i>
+                        </button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}

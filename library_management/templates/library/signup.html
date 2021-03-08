@@ -1,10 +1,8 @@
 {% extends "library/base.html" %}
 {% load crispy_forms_tags %}
 {% load admin_urls %}
-
 {% block content %}
 <form action="" method="post" autocomplete="off" enctype="multipart/form-data">
-    {% csrf_token %}
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
@@ -12,8 +10,9 @@
         {% endfor %}
     </ul>
     {% endif %}
-    <!-- {{form.role|as_crispy_field}} -->
-    <div class="form-group">
+    {% csrf_token %}
+    {{form.role|as_crispy_field}}
+    <!-- <div class="form-group">
         <label class="control-label col-xs-4"><label for="id_role">Role</label></label>
         <div class="col-xs-10">
             <select name="role" id="id_role" onchange="changeStatus()">
@@ -22,9 +21,9 @@
                 <option value="2">Faculty</option>
                 <option value="3">Librarian</option>
                 <option value="3">Admin</option>
-                </select>
+            </select>
         </div>
-    </div>
+    </div> -->
     {{form.username|as_crispy_field}}
     {{form.first_name|as_crispy_field}}
     {{form.last_name|as_crispy_field}}
