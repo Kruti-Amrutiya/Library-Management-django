@@ -13,17 +13,14 @@ urlpatterns = [
 
     path('studentlist/', views.StudentListView.as_view(), name='studentlist'),
     path('studentdetail/<int:id>/', views.StudentDetailView.as_view(), name='studentdetail'),
-    path('studentupdate/<int:id>/', views.StudentUpdateView.as_view(), name='studentupdate'),
     path('studentdelete/<int:id>/', views.StudentDeleteView.as_view(), name='studentdelete'),
 
     path('facultylist/', views.FacultyListView.as_view(), name='facultylist'),
     path('facultydetail/<int:id>/', views.FacultyDetailView.as_view(), name='facultydetail'),
-    path('facultyupdate/<int:id>/', views.FacultyUpdateView.as_view(), name='facultyupdate'),
     path('facultydelete/<int:id>/', views.FacultyDeleteView.as_view(), name='facultydelete'),
 
     path('librarianlist/', views.LibrarianListView.as_view(), name='librarianlist'),
     path('librariandetail/<int:id>/', views.LibrarianDetailView.as_view(), name='librariandetail'),
-    path('librarianupdate/<int:id>/', views.LibrarianUpdateView.as_view(), name='librarianupdate'),
     path('librariandelete/<int:id>/', views.LibrarianDeleteView.as_view(), name='librariandelete'),
 
     path('booklist', views.BookListView.as_view(), name='booklist'),

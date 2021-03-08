@@ -1,14 +1,14 @@
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
-from .models import Book, BookRecord, User, Student, Role
-from library.forms import UserSignupForm, BookForm, StudentAndFacultyUpdateForm, LibrarianUpdateForm
+from .models import Book, BookRecord, User, Role
+from library.forms import UserSignupForm, BookForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.views.generic.list import ListView
-from django.views.generic.edit import UpdateView
 from django.views import View
 from django.contrib import messages, auth
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-# from django.forms.models import modelform_factory
+from library_management.settings import EMAIL_HOST_USER
+from django.core.mail import send_mail
 
 
 # HOME PAGE
@@ -24,6 +24,10 @@ class UserSignupView(View):
     def post(self, request):
         form = UserSignupForm(request.POST, request.FILES)
         if form.is_valid():
+            subject = 'Welcome to Library Management System'
+            message = 'Hope you are enjoying your Django Project'
+            recepient = str(form['email'].value())
+            send_mail(subject, message, EMAIL_HOST_USER, [recepient], fail_silently=False)
             password = form.cleaned_data['password']
             form1 = form.save(commit=False)
             form1.set_password(password)
@@ -46,8 +50,10 @@ class LoginView(View):
             auth.login(request, user)
             if user.role.role == 'Admin':
                 return HttpResponseRedirect('/adminprofile')
-            elif user.role.role == 'Student' or user.role.role == 'Faculty':
-                return HttpResponseRedirect('/studentandfacultyprofile')
+            elif user.role.role == 'Student':
+                return HttpResponseRedirect('/studentprofile')
+            elif user.role.role == 'Faculty':
+                return HttpResponseRedirect('/facultyprofile')
             else:
                 return HttpResponseRedirect('/librarianprofile')
         else:
@@ -105,16 +111,8 @@ class IssuebookView(View):
         # avilable book and update in bookrecord update
         return render(request, 'library/issuebook.html', {'bookrecords': bookrecords})
 
-    # def post(self, request):
-    #     form = BookForm(request.POST)
-    #     if form.is_valid():
-    #         obj = Book()
-    #         obj.title = request.POST.get('title')
-    #         obj.author = request.POST.get('author')
-    #         obj.save()
-    #         return HttpResponseRedirect('/bookissued')
 
-
+# Student List View in admin dashboard
 class StudentListView(LoginRequiredMixin, View):
     def get(self, request):
         role = Role.objects.get(role='Student')
@@ -122,32 +120,17 @@ class StudentListView(LoginRequiredMixin, View):
         return render(request, 'library/studentlist.html', {'students': students})
 
 
+# Student Details View in admin dashboard
 class StudentDetailView(LoginRequiredMixin, View):
     def get(self, request, id):
         try:
             student = User.objects.get(id=id)
         except User.DoesNotExist:
             return HttpResponseRedirect('/studentlist')
-        return render(request, 'library/studentprofile.html', {'student': student})
+        return render(request, 'library/studentdetail.html', {'student': student})
 
 
-class StudentUpdateView(LoginRequiredMixin, View):
-    def get(self, request, id):
-        try:
-            students = User.objects.get(id=id)
-        except User.DoesNotExist:
-            return HttpResponseRedirect('/studentlist')
-        form = StudentAndFacultyUpdateForm(instance=students)
-        return render(request, "library/studentupdate.html", {'form': form})
-
-    def post(self, request, id):
-        students = User.objects.get(pk=id)
-        form = StudentAndFacultyUpdateForm(request.POST, instance=students)
-        if form.is_valid():
-            form.save()
-        return HttpResponseRedirect('/studentlist')
-
-
+# Student delete View in admin dashboard
 class StudentDeleteView(LoginRequiredMixin, View):
     def post(self, request, id):
         try:
@@ -158,6 +141,7 @@ class StudentDeleteView(LoginRequiredMixin, View):
         return HttpResponseRedirect('/studentlist')
 
 
+# Faculty list View in admin dashboard
 class FacultyListView(LoginRequiredMixin, View):
     def get(self, request):
         role = Role.objects.get(role='Faculty')
@@ -165,32 +149,17 @@ class FacultyListView(LoginRequiredMixin, View):
         return render(request, 'library/facultylist.html', {'faculties': faculties})
 
 
+# Faculty details View in admin dashboard
 class FacultyDetailView(LoginRequiredMixin, View):
     def get(self, request, id):
         try:
             faculty = User.objects.get(id=id)
         except User.DoesNotExist:
             return HttpResponseRedirect('/facultylist')
-        return render(request, 'library/facultyprofile.html', {'faculty': faculty})
+        return render(request, 'library/facultydetail.html', {'faculty': faculty})
 
 
-class FacultyUpdateView(LoginRequiredMixin, View):
-    def get(self, request, id):
-        try:
-            faculties = User.objects.get(id=id)
-        except User.DoesNotExist:
-            return HttpResponseRedirect('/facultylist')
-        form = StudentAndFacultyUpdateForm(instance=faculties)
-        return render(request, "library/facultyupdate.html", {'form': form})
-
-    def post(self, request, id):
-        faculties = User.objects.get(pk=id)
-        form = StudentAndFacultyUpdateForm(request.POST, instance=faculties)
-        if form.is_valid():
-            form.save()
-        return HttpResponseRedirect('/facultylist')
-
-
+# Faculty delete View in admin dashboard
 class FacultyDeleteView(LoginRequiredMixin, View):
     def post(self, request, id):
         try:
@@ -201,6 +170,7 @@ class FacultyDeleteView(LoginRequiredMixin, View):
         return HttpResponseRedirect('/facultylist')
 
 
+# Librarian list View in admin dashboard
 class LibrarianListView(LoginRequiredMixin, View):
     def get(self, request):
         role = Role.objects.get(role='Librarian')
@@ -208,32 +178,17 @@ class LibrarianListView(LoginRequiredMixin, View):
         return render(request, 'library/librarianlist.html', {'librarians': librarians})
 
 
+# Librarian details View in admin dashboard
 class LibrarianDetailView(LoginRequiredMixin, View):
     def get(self, request, id):
         try:
             librarian = User.objects.get(id=id)
         except User.DoesNotExist:
             return HttpResponseRedirect('/librarianlist')
-        return render(request, 'library/librarianprofile.html', {'librarian': librarian})
+        return render(request, 'library/librariandetail.html', {'librarian': librarian})
 
 
-class LibrarianUpdateView(LoginRequiredMixin, View):
-    def get(self, request, id):
-        try:
-            librarians = User.objects.get(id=id)
-        except User.DoesNotExist:
-            return HttpResponseRedirect('/librarianlist')
-        form = LibrarianUpdateForm(instance=librarians)
-        return render(request, "library/librarianupdate.html", {'form': form})
-
-    def post(self, request, id):
-        librarians = User.objects.get(pk=id)
-        form = LibrarianUpdateForm(request.POST, instance=librarians)
-        if form.is_valid():
-            form.save()
-        return HttpResponseRedirect('/librarianlist')
-
-
+# Librarian delete View in admin dashboard
 class LibrarianDeleteView(LoginRequiredMixin, View):
     def post(self, request, id):
         try:

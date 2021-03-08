@@ -30,9 +30,6 @@
                 <td>{{faculty.role}}</td>
                 <td>
                     {% if user.is_superuser %}
-                        <a href="{% url 'facultyupdate' faculty.id %}" class="btn text-warning px-2">
-                            <i class="far fa-edit fa-lg"></i>
-                        </a>
                     <form action="{% url 'facultydelete' faculty.id %}" method="POST" class="d-inline">
                     {% csrf_token %}
                         <button type="submit" class="btn">

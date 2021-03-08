@@ -36,19 +36,12 @@
     <center><h3 style="margin-bottom: 0px;" class ='alert alert-success'>Welcome to Online library !</h3></center>
     <div class="jumbotron" style="margin-bottom: 0px;">
     <img class="card-img-top" src="{{faculty.profile_img.url}}" alt="Profile image" style="width:100px">
-    <h1 class="display-4 container">Hello {{user}}!</h1>
-    <h3>Username: {{user.username}}</h3>
-    <h3>First_Name: {{user.first_name}}</h3>
-    <h3>Last_Name: {{user.last_name}}</h3>
-    <h3>Role: {{user.role.role}}</h3>
-    <h3>Phone_num: {{user.phone_num}}</h3>
-    <p class="lead">As you are Faculty, you can see how many book you have taken from library with fine and many more ...!</p>
-    <hr class="my-4">
-    <p class="lead">Option Available For You</p>
-    <div class="options" style="text-align:center">
-      <a href="{% url 'viewissuedbookbystudent' %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">View Issued book</a><br><br>
-      <a href="{% url 'booklist' %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Issue book</a><br><br><br><br><br><br><br><br><br><br>
-    </div>
+    <h1 class="display-4 container">Hello {{faculty}}!</h1>
+    <h3>Username: {{faculty.username}}</h3>
+    <h3>First_Name: {{faculty.first_name}}</h3>
+    <h3>Last_Name: {{faculty.last_name}}</h3>
+    <h3>Role: {{faculty.role.role}}</h3>
+    <h3>Phone_num: {{faculty.phone_num}}</h3>
     </div>
   </body>
 </html>
