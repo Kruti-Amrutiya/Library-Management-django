@@ -34,11 +34,11 @@ class Department(models.Model):
 
 
 class User(AbstractUser):
-    role = models.ForeignKey(Role, on_delete=models.CASCADE, null=True, blank=True)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE, null=True, blank=True, related_name='myrole')
     address = models.TextField(max_length=255, null=True, blank=True)
     phone_num = PhoneNumberField(null=True, blank=True, unique=True)
     profile_img = models.ImageField(blank=True, upload_to='profile_image/', null=True)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True, related_name='mydepartment')
 
 
 class Student(models.Model):
@@ -96,7 +96,7 @@ class Category(models.Model):
 class Book(models.Model):
     title = models.CharField(max_length=255, null=True, blank=True)
     author = models.CharField(max_length=255, null=True, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, help_text="Select a category for this book", null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, help_text="Select a category for this book", null=True, blank=True, related_name='mycategory')
     book_img = models.ImageField(blank=True, null=True, upload_to='book_image/')
     total_copies_of_books = models.BigIntegerField(default=None, null=True, blank=True)
     available_copies_of_books = models.BigIntegerField(default=None, null=True, blank=True)
@@ -106,8 +106,8 @@ class Book(models.Model):
 
 
 class BookRecord(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='myuser')
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, null=True, blank=True, related_name='mybook')
     issue_date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     due_date = models.DateTimeField(default=None, null=True, blank=True, editable=False)
     return_date = models.DateTimeField(default=None, null=True, blank=True)
