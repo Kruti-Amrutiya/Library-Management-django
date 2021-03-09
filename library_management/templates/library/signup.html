@@ -1,6 +1,25 @@
 {% extends "library/base.html" %}
 {% load crispy_forms_tags %}
 {% load admin_urls %}
+{% block javascript %}
+<script>
+    $("#id_username").change(function () {
+      var username = $(this).val();
+      $.ajax({
+        url: '/ajax/validate_username/',
+        data: {
+          'username': username
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.is_taken) {
+            alert("A user with this username already exists.");
+          }
+        }
+      });
+    });
+  </script>
+{% endblock %}
 {% block content %}
 <form action="" method="post" autocomplete="off" enctype="multipart/form-data">
     {% if messages %}

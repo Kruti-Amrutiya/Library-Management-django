@@ -9,6 +9,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from library_management.settings import EMAIL_HOST_USER
 from django.core.mail import send_mail
+from django.http import JsonResponse
 
 
 # HOME PAGE
@@ -34,8 +35,16 @@ class UserSignupView(View):
             form1.save()
             return HttpResponseRedirect('/login')
         else:
-            messages.error(request, 'Username already exist!!')
+            # messages.error(request, 'Username already exist!!')
             return HttpResponseRedirect('/signup')
+
+
+def validate_username(request):
+    username = request.GET.get('username', None)
+    data = {
+        'is_taken': User.objects.filter(username=username).exists()
+    }
+    return JsonResponse(data)
 
 
 class LoginView(View):
@@ -101,15 +110,28 @@ class ViewIssuedBooks(LoginRequiredMixin, View):
         return render(request, 'library/viewissuedbooks.html', {'bookrecords': bookrecords})
 
 
-class IssuebookView(View):
+class IssueBookView(View):
     def post(self, request, id):
         user = User.objects.get(username=request.user)
-        count = Book.objects.all().count()
-        print(count)
+        book_count = Book.objects.all().count()
+        print(book_count)
         bookrecords = BookRecord.objects.create(user=user, book=id)
         bookrecords.save()
         # avilable book and update in bookrecord update
         return render(request, 'library/issuebook.html', {'bookrecords': bookrecords})
+
+
+def available_copies_of_books(request):
+    if request.method == 'GET':
+        available_book_id = request.GET.get('available_copies_of_books')
+        # books = Book.objects.get(id=available_book_id)
+        print(available_book_id)
+        # book_records = BookRecord(book=books)
+        # book_records.save()
+        # return render(request, 'library/bookadd.html', {'books': books})
+        return HttpResponse('Success')
+    else:
+        return HttpResponse('Unsuccessfull')
 
 
 # Student List View in admin dashboard

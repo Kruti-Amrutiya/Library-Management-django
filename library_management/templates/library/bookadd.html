@@ -1,4 +1,20 @@
 {% extends 'library/base.html' %}
+{% block javascript %}
+<script type="text/javascript">
+    $("#id_total_copies_of_books").click(function(){
+        var totalBookId = $(this).val();
+        $.ajax({              
+            url: '/ajax/available_copies_of_books/',                    
+            data: {
+                'totalBookAvailable': totalBookId  
+            },
+            success: function (data) {   
+                $("#id_available_copies_of_books")
+            },
+        });
+        });
+</script>
+{% endblock %}
 {% load crispy_forms_tags %}
 {% block content %}
 <form action="" method="post" autocomplete="off" enctype="multipart/form-data">
