@@ -4,12 +4,9 @@ from django.contrib.auth.forms import UserCreationForm
 
 
 class UserSignupForm(UserCreationForm):
-    password = forms.CharField(widget=forms.PasswordInput())
-    confirm_password = forms.CharField(widget=forms.PasswordInput())
-
     class Meta:
         model = User
-        fields = ['role', 'username', 'first_name', 'last_name', 'email', 'password', 'confirm_password', 'address', 'phone_num',  'profile_img', 'department']
+        fields = ['role', 'username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'address', 'phone_num',  'profile_img', 'department']
 
 
 class BookForm(forms.ModelForm):

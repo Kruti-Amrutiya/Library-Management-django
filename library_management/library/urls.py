@@ -25,8 +25,7 @@ urlpatterns = [
     path('librariandetail/<int:id>/', views.LibrarianDetailView.as_view(), name='librariandetail'),
     path('librariandelete/<int:id>/', views.LibrarianDeleteView.as_view(), name='librariandelete'),
 
-    path('increment_copies_of_books/', views.IncrementOfBooks.as_view(), name='increment_copies_of_books'),
-    path('decrement_copies_of_books/', views.DecrementOfBooks.as_view(), name='decrement_copies_of_books'),
+    path('copies_of_books/', views.CopiesOfBooks.as_view(), name='copies_of_books'),
     path('booklist', views.BookListView.as_view(), name='booklist'),
     path('bookdetail/<int:id>', views.BookDetailView.as_view(), name='bookdetail'),
     path('bookadd/', views.BookAddView.as_view(), name='bookadd'),

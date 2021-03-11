@@ -34,6 +34,7 @@ class UserSignupView(View):
             form1.save()
             return HttpResponseRedirect('/login')
         else:
+            print(form.errors)
             messages.error(request, 'Username already exist!!')
             return HttpResponseRedirect('/signup')
 
@@ -274,21 +275,23 @@ class BookDeleteView(LoginRequiredMixin, View):
         return HttpResponseRedirect('/booklist')
 
 
-class IncrementOfBooks(View):
+class CopiesOfBooks(View):
     def post(self, request):
         id = request.POST.get('book_id')
         book = Book.objects.get(id=id)
-        book.total_copies_of_books += 1
-        book.available_copies_of_books += 1
+        success = True
+        if request.POST['action'] == 'increment':
+            book.total_copies_of_books += 1
+            book.available_copies_of_books += 1
+        else:
+            if book.available_copies_of_books < 1:
+                if book.total_copies_of_books < 2:
+                    success = False
+                else:
+                    book.total_copies_of_books -= 1
+            else:
+                book.total_copies_of_books -= 1
+                book.available_copies_of_books -= 1
+       
         book.save()
-        return JsonResponse({'copies_of_book': book.total_copies_of_books, 'available_copies': book.available_copies_of_books})
-
-
-class DecrementOfBooks(View):
-    def post(self, request):
-        id = request.POST.get('book_id')
-        book = Book.objects.get(id=id)
-        book.total_copies_of_books -= 1
-        book.available_copies_of_books -= 1
-        book.save()
-        return JsonResponse({'copies_of_book': book.total_copies_of_books, 'available_copies': book.available_copies_of_books})
+        return JsonResponse({'copies_of_books': book.total_copies_of_books, 'available_copies': book.available_copies_of_books, 'success': success})
