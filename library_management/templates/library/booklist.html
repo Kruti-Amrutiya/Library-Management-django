@@ -24,7 +24,7 @@
         <tbody>
         {% for book in object_list %}
             <tr>
-                <td>{{book.title}}</td>
+                <td><a href="{% url 'bookdetail' book.id %}">{{book.title}}</a></td>
                 <td>{{book.author}}</td>
                 <td>{{book.category}}</td>
                 <td><img style="width: 90px; height: 90px;" src="{{book.book_img.url}}" alt="{{ book.title }}"></td>

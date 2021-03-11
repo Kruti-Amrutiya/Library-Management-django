@@ -4,10 +4,10 @@ from . import views
 urlpatterns = [
     path('', views.home_view.as_view(), name='home'),
     path('signup/', views.UserSignupView.as_view(), name='signup'),
-    path('ajax/validate_username/', views.validate_username, name='validate_username'),
+    path('validate_username/', views.ValidateUsername.as_view(), name='validate_username'),
     path('login/', views.LoginView.as_view(), name='login'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
-    
+
     path('studentprofile', views.StudentProfileView.as_view(), name='studentprofile'),
     path('facultyprofile', views.FacultyProfileView.as_view(), name='facultyprofile'),
     path('librarianprofile', views.LibrarianProfileView.as_view(), name='librarianprofile'),
@@ -25,8 +25,10 @@ urlpatterns = [
     path('librariandetail/<int:id>/', views.LibrarianDetailView.as_view(), name='librariandetail'),
     path('librariandelete/<int:id>/', views.LibrarianDeleteView.as_view(), name='librariandelete'),
 
-    path('ajax/available_copies_of_books/', views.available_copies_of_books, name='ajax_available_copies_of_books'),
+    path('increment_copies_of_books/', views.IncrementOfBooks.as_view(), name='increment_copies_of_books'),
+    path('decrement_copies_of_books/', views.DecrementOfBooks.as_view(), name='decrement_copies_of_books'),
     path('booklist', views.BookListView.as_view(), name='booklist'),
+    path('bookdetail/<int:id>', views.BookDetailView.as_view(), name='bookdetail'),
     path('bookadd/', views.BookAddView.as_view(), name='bookadd'),
     path('bookupdate/<int:id>', views.BookUpdateView.as_view(), name='bookupdate'),
     path('bookdelete/<int:id>', views.BookDeleteView.as_view(), name='bookdelete'),
