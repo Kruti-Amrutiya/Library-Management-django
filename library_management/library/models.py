@@ -101,8 +101,8 @@ class Book(models.Model):
     total_copies_of_books = models.BigIntegerField(default=None, null=True, blank=True)
     available_copies_of_books = models.BigIntegerField(default=None, null=True, blank=True)
 
-    # def __str__(self):
-    #     return self.title
+    def __str__(self):
+        return self.title
 
 
 class BookRecord(models.Model):
