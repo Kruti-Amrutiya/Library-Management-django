@@ -1,6 +1,26 @@
 {% extends "library/base.html" %}
 {% load crispy_forms_tags %}
 {% load admin_urls %}
+{% block javascript %}
+<script>
+    $("#id_username").change(function () {
+      var username = $(this).val();
+      $.ajax({
+        method: 'GET',
+        url: "{% url 'validate_username' %}",
+        data: {
+          'username': username
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.is_taken) {
+            alert("A user with this username already exists.");
+          }
+        }
+      });
+    });
+  </script>
+{% endblock %}
 {% block content %}
 <form action="" method="post" autocomplete="off" enctype="multipart/form-data">
     {% if messages %}
@@ -28,7 +48,8 @@
     {{form.first_name|as_crispy_field}}
     {{form.last_name|as_crispy_field}}
     {{form.email|as_crispy_field}}
-    {{form.password|as_crispy_field}}
+    {{form.password1|as_crispy_field}}
+    {{form.password2|as_crispy_field}}
     {{form.address|as_crispy_field}}
     {{form.phone_num|as_crispy_field}}
     {{form.profile_img|as_crispy_field}}

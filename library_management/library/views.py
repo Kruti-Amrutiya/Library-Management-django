@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from .models import Book, BookRecord, User, Role
-from library.forms import UserSignupForm, BookForm
+from library.forms import UserSignupForm, BookForm, BookUpdateForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.views.generic.list import ListView
 from django.views import View
@@ -9,14 +9,16 @@ from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from library_management.settings import EMAIL_HOST_USER
 from django.core.mail import send_mail
+from django.http import JsonResponse
 
 
-# HOME PAGE
+# Home Page
 class home_view(View):
     def get(self, request):
         return render(request, 'library/index.html')
 
 
+# User SignupForm
 class UserSignupView(View):
     def get(self, request):
         return render(request, 'library/signup.html', {'form': UserSignupForm()})
@@ -28,16 +30,26 @@ class UserSignupView(View):
             message = 'Hope you are enjoying your Django Project'
             recepient = str(form['email'].value())
             send_mail(subject, message, EMAIL_HOST_USER, [recepient], fail_silently=False)
-            password = form.cleaned_data['password']
             form1 = form.save(commit=False)
-            form1.set_password(password)
             form1.save()
             return HttpResponseRedirect('/login')
         else:
+            print(form.errors)
             messages.error(request, 'Username already exist!!')
             return HttpResponseRedirect('/signup')
 
 
+# Username validation
+class ValidateUsername(View):
+    def get(self, request):
+        username = request.GET.get('username', None)
+        data = {
+            'is_taken': User.objects.filter(username=username).exists()
+        }
+        return JsonResponse(data)
+
+
+# User LoginForm
 class LoginView(View):
     def get(self, request):
         return render(request, 'library/login.html', {'form': AuthenticationForm()})
@@ -60,6 +72,7 @@ class LoginView(View):
             messages.info(request, 'Invalid username or password', extra_tags='alert')
 
 
+# User LogOut
 class LogoutView(View):
     def get(self, request):
         logout(request)
@@ -101,15 +114,14 @@ class ViewIssuedBooks(LoginRequiredMixin, View):
         return render(request, 'library/viewissuedbooks.html', {'bookrecords': bookrecords})
 
 
-class IssuebookView(View):
-    def post(self, request, id):
+class ViewIssuedBooksRequest(LoginRequiredMixin, View):
+    def get(self, request):
         user = User.objects.get(username=request.user)
-        count = Book.objects.all().count()
-        print(count)
-        bookrecords = BookRecord.objects.create(user=user, book=id)
-        bookrecords.save()
+        books = Book.objects.all()
+        # bookrecords = BookRecord.objects.create(user=user, book=id)
+        # bookrecords.save()
         # avilable book and update in bookrecord update
-        return render(request, 'library/issuebook.html', {'bookrecords': bookrecords})
+        return render(request, 'library/issuebook.html', {'books': books})
 
 
 # Student List View in admin dashboard
@@ -202,10 +214,20 @@ class LibrarianDeleteView(LoginRequiredMixin, View):
 # Book Listview
 class BookListView(LoginRequiredMixin, ListView):
     template_name = "library/booklist.html"
-    paginate_by = 10
+    paginate_by = 3
 
     def get_queryset(self):
         return Book.objects.all()
+
+
+# Book Details
+class BookDetailView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        try:
+            book = Book.objects.get(id=id)
+        except Book.DoesNotExist:
+            return HttpResponseRedirect('/booklist')
+        return render(request, 'library/bookdetail.html', {'book': book})
 
 
 # Class to add any book data
@@ -230,12 +252,12 @@ class BookUpdateView(LoginRequiredMixin, View):
             book = Book.objects.get(pk=id)
         except Book.DoesNotExist:
             return HttpResponseRedirect('/booklist')
-        form = BookForm(instance=book)
-        return render(request, "library/bookadd.html", {'form': form})
+        form = BookUpdateForm(instance=book)
+        return render(request, "library/bookupdate.html", {'form': form, 'book': book})
 
     def post(self, request, id):
         book = Book.objects.get(pk=id)
-        form = BookForm(request.POST, instance=book)
+        form = BookUpdateForm(request.POST, instance=book)
         if form.is_valid():
             form.save()
         return HttpResponseRedirect('/booklist')
@@ -250,3 +272,25 @@ class BookDeleteView(LoginRequiredMixin, View):
             return HttpResponseRedirect('/booklist')
         book.delete()
         return HttpResponseRedirect('/booklist')
+
+
+# Copies of books
+class CopiesOfBooks(View):
+    def post(self, request):
+        id = request.POST.get('book_id')
+        book = Book.objects.get(id=id)
+        success = True
+        if request.POST['action'] == 'increment':
+            book.total_copies_of_books += 1
+            book.available_copies_of_books += 1
+        else:
+            if book.available_copies_of_books < 1:
+                if book.total_copies_of_books < 2:
+                    success = False
+                else:
+                    book.total_copies_of_books -= 1
+            else:
+                book.total_copies_of_books -= 1
+                book.available_copies_of_books -= 1
+        book.save()
+        return JsonResponse({'copies_of_books': book.total_copies_of_books, 'available_copies': book.available_copies_of_books, 'success': success})

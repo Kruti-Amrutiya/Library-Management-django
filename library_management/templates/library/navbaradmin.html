@@ -15,7 +15,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
 </head>
 <body>
 <div class="bs-example">
@@ -32,7 +31,6 @@
                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Book</a>
                     <div class="dropdown-menu">
                       <a href="{% url 'booklist' %}" class="dropdown-item">View Books</a>
-                      <a href="{% url 'viewissuedbooks' %}" class="dropdown-item">View Total Issued book</a>
                     </div>
                   </div>
             </div>
@@ -57,4 +55,6 @@
     </nav>
 </div>
 </body>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+{% block javascript %}{% endblock %}
 </html>
