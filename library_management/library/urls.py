@@ -34,6 +34,5 @@ urlpatterns = [
 
     path('viewissuedbookbystudent/', views.ViewIssuedBooksByStudent.as_view(), name='viewissuedbookbystudent'),
     path('viewissuedbooks/', views.ViewIssuedBooks.as_view(), name='viewissuedbooks'),
-    path('bookissue/<int:id>/', views.IssueBookView.as_view(), name='bookissue'),
-    # path('viewissuedbooksrequest/', views.ViewIssuedBooksRequest.as_view(), name='viewissuedbooksrequest'),
+    path('viewissuedbooksrequest/', views.ViewIssuedBooksRequest.as_view(), name='viewissuedbooksrequest'),
 ]

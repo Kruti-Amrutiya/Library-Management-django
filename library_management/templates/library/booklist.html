@@ -22,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for book in object_list %}
+        {% for book in books %}
             <tr>
                 <td><a href="{% url 'bookdetail' book.id %}">{{book.title}}</a></td>
                 <td>{{book.author}}</td>
@@ -42,7 +42,7 @@
                         </button>
                     </form>
                     {% else %}
-                    <form action="{% url 'bookissue' book.id %}" method="POST" class="d-inline">
+                    <form action="{% url 'viewissuedbooksrequest' book.id %}" method="POST" class="d-inline">
                         {% csrf_token %}
                         <button type="submit" class="btn text-warning px-2">
                             <i class="bi bi-book-half"></i>
@@ -54,4 +54,17 @@
         {% endfor %}
         </tbody>
     </table>
+    {% if is_paginated %}
+        <nav aria-label="Page navigation conatiner"></nav>
+        <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li><a href="?page={{ page_obj.previous_page_number }}" class="page-link">&laquo; PREV </a></li>
+        {% endif %}
+        {% if page_obj.has_next %}
+        <li><a href="?page={{ page_obj.next_page_number }}" class="page-link"> NEXT &raquo;</a></li>
+        {% endif %}
+        </ul>
+        </nav>
+        </div>
+    {% endif %}
 {% endblock content %}

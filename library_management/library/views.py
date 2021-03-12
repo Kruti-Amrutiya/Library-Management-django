@@ -114,15 +114,14 @@ class ViewIssuedBooks(LoginRequiredMixin, View):
         return render(request, 'library/viewissuedbooks.html', {'bookrecords': bookrecords})
 
 
-class IssueBookView(View):
-    def post(self, request, id):
+class ViewIssuedBooksRequest(LoginRequiredMixin, View):
+    def get(self, request):
         user = User.objects.get(username=request.user)
-        book_count = Book.objects.all().count()
-        print(book_count)
-        bookrecords = BookRecord.objects.create(user=user, book=id)
-        bookrecords.save()
+        books = Book.objects.all()
+        # bookrecords = BookRecord.objects.create(user=user, book=id)
+        # bookrecords.save()
         # avilable book and update in bookrecord update
-        return render(request, 'library/issuebook.html', {'bookrecords': bookrecords})
+        return render(request, 'library/issuebook.html', {'books': books})
 
 
 # Student List View in admin dashboard
@@ -215,7 +214,7 @@ class LibrarianDeleteView(LoginRequiredMixin, View):
 # Book Listview
 class BookListView(LoginRequiredMixin, ListView):
     template_name = "library/booklist.html"
-    paginate_by = 10
+    paginate_by = 3
 
     def get_queryset(self):
         return Book.objects.all()
@@ -275,6 +274,7 @@ class BookDeleteView(LoginRequiredMixin, View):
         return HttpResponseRedirect('/booklist')
 
 
+# Copies of books
 class CopiesOfBooks(View):
     def post(self, request):
         id = request.POST.get('book_id')
@@ -292,6 +292,5 @@ class CopiesOfBooks(View):
             else:
                 book.total_copies_of_books -= 1
                 book.available_copies_of_books -= 1
-       
         book.save()
         return JsonResponse({'copies_of_books': book.total_copies_of_books, 'available_copies': book.available_copies_of_books, 'success': success})
