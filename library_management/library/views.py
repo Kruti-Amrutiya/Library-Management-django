@@ -10,6 +10,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from library_management.settings import EMAIL_HOST_USER
 from django.core.mail import send_mail
 from django.http import JsonResponse
+from django.db.models import Q
+import datetime
 
 
 # Home Page
@@ -32,7 +34,7 @@ class UserSignupView(View):
             send_mail(subject, message, EMAIL_HOST_USER, [recepient], fail_silently=False)
             form1 = form.save(commit=False)
             form1.save()
-            return HttpResponseRedirect('/login')
+            return render(request, 'library/userprofile.html', {'user': user})
         else:
             print(form.errors)
             messages.error(request, 'Username already exist!!')
@@ -58,16 +60,13 @@ class LoginView(View):
         uname = request.POST.get('username')
         upass = request.POST.get('password')
         user = auth.authenticate(request, username=uname, password=upass)
+        print(user.id)
         if user is not None:
             auth.login(request, user)
             if user.role.role == 'Admin':
                 return HttpResponseRedirect('/adminprofile')
-            elif user.role.role == 'Student':
-                return HttpResponseRedirect('/studentprofile')
-            elif user.role.role == 'Faculty':
-                return HttpResponseRedirect('/facultyprofile')
             else:
-                return HttpResponseRedirect('/librarianprofile')
+                return render(request, 'library/userprofile.html', {'user': user})
         else:
             messages.info(request, 'Invalid username or password', extra_tags='alert')
 
@@ -79,49 +78,104 @@ class LogoutView(View):
         return HttpResponseRedirect('/login')
 
 
-class StudentProfileView(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request, 'library/studentprofile.html')
+# User Profile View
+class UserProfileView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        user = User.objects.get(id=id)
+        return render(request, 'library/userprofile.html', {"user": user})
 
 
-class FacultyProfileView(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request, 'library/facultyprofile.html')
-
-
-class LibrarianProfileView(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request, 'library/librarianprofile.html')
-
-
+# Admin Profile View
 class AdminProfileView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'library/adminprofile.html')
 
 
 # View will return bookrecords
-class ViewIssuedBooksByStudent(LoginRequiredMixin, View):
+class ViewTotalIssuedBooks(LoginRequiredMixin, View):
     def get(self, request):
         user = User.objects.get(username=request.user)
-        bookrecords = BookRecord.objects.filter(user=user)
-        return render(request, 'library/viewissuedbookbystudent.html', {'bookrecords': bookrecords})
+        book_records = BookRecord.objects.filter(user=user)
+        # book_records = BookRecord.objects.all()
+        return render(request, 'library/issuedbooks.html', {'book_records': book_records})
 
 
 class ViewIssuedBooks(LoginRequiredMixin, View):
     def get(self, request):
         user = User.objects.get(username=request.user)
-        bookrecords = BookRecord.objects.filter(user=user)
-        return render(request, 'library/viewissuedbooks.html', {'bookrecords': bookrecords})
+        book_records = BookRecord.objects.filter(user=user)
+        return render(request, 'library/issuedbooks.html', {'book_records': book_records})
 
 
 class ViewIssuedBooksRequest(LoginRequiredMixin, View):
     def get(self, request):
-        user = User.objects.get(username=request.user)
         books = Book.objects.all()
-        # bookrecords = BookRecord.objects.create(user=user, book=id)
-        # bookrecords.save()
-        # avilable book and update in bookrecord update
         return render(request, 'library/issuebook.html', {'books': books})
+
+
+# Class for issue book from library
+class BookIssueView(LoginRequiredMixin, View):
+    def post(self, request, id):
+        flag = 0
+        books = Book.objects.get(id=id)
+        all_book_records = BookRecord.objects.filter(book__title__iexact=books.title)
+        for current_user in all_book_records:
+            if current_user.user == request.user and current_user.return_date is None:
+                flag = 1
+                messages.error(request, "Book Already Issued")
+                return HttpResponseRedirect('/booklist')
+
+        if flag == 0:
+            all_user_records = BookRecord.objects.filter(Q(user__username__iexact=str(request.user)) & Q(return_date=None)).count()
+            if all_user_records > 2:
+                messages.error(request, "You cannot issue more than 3 books")
+                return HttpResponseRedirect('/booklist')
+            elif books.available_copies_of_books == 0:
+                messages.error(request, 'This book is out of stock!!')
+                return HttpResponseRedirect('/booklist')
+            elif books.available_copies_of_books > 0:
+                books.available_copies_of_books -= 1
+                books.save()
+                issue_book_record = BookRecord.objects.create(user=request.user, book=books)
+                issue_book_record.save()
+                messages.info(request, 'Book issue successfully!!')
+            return HttpResponseRedirect('/viewtotalissuedbooks')
+
+
+# Class for return book to library
+class BookReturnView(LoginRequiredMixin, View):
+    def post(self, request, id):
+        present_book = BookRecord.objects.get(id=id)
+        if present_book:
+            present_book.return_date = datetime.datetime.now()
+            present_book.save()
+            books = Book.objects.get(title=present_book.book)
+            books.available_copies_of_books += 1
+            books.save()
+            messages.info(request, 'Book return successfully!!')
+        else:
+            messages.error(request, 'There is no books available!!')
+        return HttpResponseRedirect('/booklist')
+
+
+# Title search
+class SearchBox(LoginRequiredMixin, View):
+    def post(self, request):
+        search_str = request.POST.get('searchText')
+        books = Book.objects.filter(title__icontains=search_str)
+        context = []
+        for book in books:
+            details = {
+                'id': book.id,
+                'title': book.title,
+                'author': book.author,
+                'category': book.category.category,
+                'book_img': book.book_img.url,
+                'total_copies_of_books': book.total_copies_of_books,
+                'available_copies_of_books': book.available_copies_of_books
+            }
+            context.append(details)
+        return JsonResponse(context, safe=False)
 
 
 # Student List View in admin dashboard
@@ -142,15 +196,19 @@ class StudentDetailView(LoginRequiredMixin, View):
         return render(request, 'library/studentdetail.html', {'student': student})
 
 
-# Student delete View in admin dashboard
-class StudentDeleteView(LoginRequiredMixin, View):
+# User delete View in admin dashboard
+class UserDeleteView(LoginRequiredMixin, View):
     def post(self, request, id):
-        try:
-            students = User.objects.get(id=id)
-        except User.DoesNotExist:
+        user = User.objects.get(id=id)
+        new_role = user.role.role
+        user.delete()
+
+        if new_role == 'Student':
             return HttpResponseRedirect('/studentlist')
-        students.delete()
-        return HttpResponseRedirect('/studentlist')
+        elif new_role == 'Faculty':
+            return HttpResponseRedirect('/facultylist')
+        else:
+            return HttpResponseRedirect('/librarianlist')
 
 
 # Faculty list View in admin dashboard
@@ -171,17 +229,6 @@ class FacultyDetailView(LoginRequiredMixin, View):
         return render(request, 'library/facultydetail.html', {'faculty': faculty})
 
 
-# Faculty delete View in admin dashboard
-class FacultyDeleteView(LoginRequiredMixin, View):
-    def post(self, request, id):
-        try:
-            faculties = User.objects.get(id=id)
-        except User.DoesNotExist:
-            return HttpResponseRedirect('/facultylist')
-        faculties.delete()
-        return HttpResponseRedirect('/facultylist')
-
-
 # Librarian list View in admin dashboard
 class LibrarianListView(LoginRequiredMixin, View):
     def get(self, request):
@@ -200,24 +247,12 @@ class LibrarianDetailView(LoginRequiredMixin, View):
         return render(request, 'library/librariandetail.html', {'librarian': librarian})
 
 
-# Librarian delete View in admin dashboard
-class LibrarianDeleteView(LoginRequiredMixin, View):
-    def post(self, request, id):
-        try:
-            librarians = User.objects.get(id=id)
-        except User.DoesNotExist:
-            return HttpResponseRedirect('/librarianlist')
-        librarians.delete()
-        return HttpResponseRedirect('/librarianlist')
-
-
 # Book Listview
 class BookListView(LoginRequiredMixin, ListView):
     template_name = "library/booklist.html"
+    model = Book
+    context_object_name = 'books'
     paginate_by = 3
-
-    def get_queryset(self):
-        return Book.objects.all()
 
 
 # Book Details

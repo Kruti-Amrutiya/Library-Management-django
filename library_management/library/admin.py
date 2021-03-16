@@ -23,7 +23,7 @@ class UserAdmin(admin.ModelAdmin):
 class BookAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'category', 'book_img', 'total_copies_of_books', 'available_copies_of_books')
     ordering = ('title',)
-    search_fields = ("title",)
+    search_fields = ("title", "author", "category")
 
 
 @admin.register(BookRecord)

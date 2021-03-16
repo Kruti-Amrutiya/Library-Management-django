@@ -1,4 +1,5 @@
-{% load static %}<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -25,6 +26,16 @@
             </button>
             <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                 <div class="navbar-nav">
+                    <a href="/" class="nav-item nav-link active">Home</a>
+                        <div class="nav-item dropdown">
+                          <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">User</a>
+                          <div class="dropdown-menu">
+                            <a href="{% url 'signup' %}" class="dropdown-item">Faculty</a>
+                            <a href="{% url 'signup' %}" class="dropdown-item">Student</a>
+                            <a href="{% url 'signup' %}" class="dropdown-item">Librarian</a>
+                            <a href="{% url 'login' %}" class="dropdown-item">Admin</a>
+                          </div>
+                        </div>
                 <div class="collapse navbar-collapse" id="mainMenu">
                     {% if user.is_authenticated %}
                       <ul class="navbar-nav ml-auto">
@@ -36,8 +47,24 @@
                                 {% if user.is_superuser %}
                                     <a class="dropdown-item" href="{% url 'adminprofile' %}">Profile</a>
                                     <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
-                                {% else %}
-                                <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+                                {% endif %}
+                                {% if user.role.role == 'Student' %}
+                                    <a class="dropdown-item" href="{% url 'userprofile' user.id %}">Profile</a>
+                                    <a class="dropdown-item" href="{% url 'booklist' %}">Issue New Book</a>
+                                    <a class="dropdown-item" href="{% url 'viewtotalissuedbooks' %}">View Issued books</a>
+                                    <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+                                {% endif %}
+                                {% if user.role.role == 'Faculty' %}
+                                    <a class="dropdown-item" href="{% url 'userprofile' user.id %}">Profile</a>
+                                    <a class="dropdown-item" href="{% url 'booklist' %}">Issue New Book</a>
+                                    <a class="dropdown-item" href="{% url 'viewtotalissuedbooks' %}">View Issued books</a>
+                                    <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+                                {% endif %}
+                                {% if user.role.role == 'Librarian' %}
+                                    <a class="dropdown-item" href="{% url 'userprofile' user.id %}">Profile</a>
+                                    <a class="dropdown-item" href="{% url 'booklist' %}">Issue New Book</a>
+                                    <a class="dropdown-item" href="{% url 'viewtotalissuedbooks' %}">View Issued books</a>
+                                    <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
                                 {% endif %}
                             </div>
                         </li>
@@ -53,17 +80,8 @@
             </div>
         </div>
         </nav>
-        <div class="container" style="padding-top: 95px; padding-right: 95px;">
-            <div class="col-md-15 offset-md-1 mt-10">
-                <div class="jumbotron">
-                    <h1 class="display-4">User Form</h1>
-                    <p class="lead font-bold">Library Management System</p>
-                    <hr class="my-4">
-                    {% block content %}
-                    {% endblock content %}
-                </div>
-            </div>  
-        </div>
+        {% block content %}
+        {% endblock content %}
          <script>
             function changeStatus(){
                 var status = document.getElementById("id_role");
