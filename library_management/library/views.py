@@ -149,7 +149,7 @@ class BookReturnView(LoginRequiredMixin, View):
         if present_book:
             present_book.return_date = datetime.datetime.now()
             present_book.save()
-            books = Book.objects.get(title=present_book.book)
+            books = Book.objects.get(title=present_book.book.title)
             books.available_copies_of_books += 1
             books.save()
             messages.info(request, 'Book return successfully!!')
