@@ -14,7 +14,7 @@ admin.site.register(Category)
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('role', 'username', 'first_name', 'last_name', 'password', 'address', 'phone_num', 'profile_img', 'department')
+    list_display = ('role', 'username', 'first_name', 'last_name', 'email', 'password', 'address', 'phone_num', 'profile_img', 'department')
     ordering = ('username',)
     search_fields = ("username",)
 
@@ -23,7 +23,7 @@ class UserAdmin(admin.ModelAdmin):
 class BookAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'category', 'book_img', 'total_copies_of_books', 'available_copies_of_books')
     ordering = ('title',)
-    search_fields = ("title",)
+    search_fields = ("title", "author", "category")
 
 
 @admin.register(BookRecord)

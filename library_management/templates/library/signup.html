@@ -1,65 +1,58 @@
 {% extends "library/base.html" %}
 {% load crispy_forms_tags %}
 {% load admin_urls %}
-{% block javascript %}
-<script>
-    $("#id_username").change(function () {
-      var username = $(this).val();
-      $.ajax({
-        method: 'GET',
-        url: "{% url 'validate_username' %}",
-        data: {
-          'username': username
-        },
-        dataType: 'json',
-        success: function (data) {
-          if (data.is_taken) {
-            alert("A user with this username already exists.");
-          }
-        }
-      });
-    });
-  </script>
-{% endblock %}
+{% load static %}
 {% block content %}
-<form action="" method="post" autocomplete="off" enctype="multipart/form-data">
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% csrf_token %}
-    {{form.role|as_crispy_field}}
-    <!-- <div class="form-group">
-        <label class="control-label col-xs-4"><label for="id_role">Role</label></label>
-        <div class="col-xs-10">
-            <select name="role" id="id_role" onchange="changeStatus()">
-                <option value="" selected="">---------</option>
-                <option value="1">Student</option>
-                <option value="2">Faculty</option>
-                <option value="3">Librarian</option>
-                <option value="3">Admin</option>
-            </select>
+<div class="container" style="padding-top: 95px; padding-right: 95px;">
+  <div class="col-md-15 offset-md-1 mt-10">
+      <div class="jumbotron">
+          <h1 class="display-4">User SignUp Form</h1>
+          <p class="lead font-bold">Library Management System</p>
+          <hr class="my-4">
+          <form action="" method="post" autocomplete="off" enctype="multipart/form-data">
+              {% if messages %}
+              <ul class="messages">
+                  {% for message in messages %}
+                  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                  {% endfor %}
+              </ul>
+              {% endif %}
+              {% csrf_token %}
+              {{form.role|as_crispy_field}}
+              <!-- <div class="form-group">
+                  <label class="control-label col-xs-4"><label for="id_role">Role</label></label>
+                  <div class="col-xs-10">
+                      <select name="role" id="id_role" onchange="changeStatus()">
+                          <option value="" selected="">---------</option>
+                          <option value="1">Student</option>
+                          <option value="2">Faculty</option>
+                          <option value="3">Librarian</option>
+                          <option value="3">Admin</option>
+                      </select>
+                  </div>
+              </div> -->
+              {{form.username|as_crispy_field}}
+              {{form.first_name|as_crispy_field}}
+              {{form.last_name|as_crispy_field}}
+              {{form.email|as_crispy_field}}
+              {{form.password1|as_crispy_field}}
+              {{form.password2|as_crispy_field}}
+              {{form.address|as_crispy_field}}
+              {{form.phone_num|as_crispy_field}}
+              {{form.profile_img|as_crispy_field}}
+              {{form.department|as_crispy_field}}
+              <div class="row">
+                  <div class="col-md-12">
+                      <button type="submit" class="btn btn-success btn-block btn-lg">SignUp</button>
+                  </div>
+              </div>
+              <br><br>
+              <div class="text-center">Already have an account? <a href="/login">Login here</a></div>
+          </form>
         </div>
-    </div> -->
-    {{form.username|as_crispy_field}}
-    {{form.first_name|as_crispy_field}}
-    {{form.last_name|as_crispy_field}}
-    {{form.email|as_crispy_field}}
-    {{form.password1|as_crispy_field}}
-    {{form.password2|as_crispy_field}}
-    {{form.address|as_crispy_field}}
-    {{form.phone_num|as_crispy_field}}
-    {{form.profile_img|as_crispy_field}}
-    {{form.department|as_crispy_field}}
-    <div class="row">
-        <div class="col-md-12">
-            <button type="submit" class="btn btn-success btn-block btn-lg">SignUp</button>
-        </div>
-    </div>
-    <br><br>
-    <div class="text-center">Already have an account? <a href="/login">Login here</a></div>
-</form>
+      </div>  
+  </div>
+  {% block javascript %}
+  <script type="text/javascript" src="{% static 'js/userNameValidation.js' %}"></script>
+  {% endblock %}
 {% endblock content %}
