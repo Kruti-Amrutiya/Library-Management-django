@@ -3,6 +3,7 @@ var appTable = document.querySelector('.app-table');
 var paginationContainer = document.querySelector('.pagination-container');
 tableOutput.style.display = 'none';
 var tbody = document.querySelector('.table-body')
+var noResult = document.querySelector('.no-result');
 
 $("#searchField").on('keyup', function(e){
     e.preventDefault();
@@ -24,7 +25,9 @@ $("#searchField").on('keyup', function(e){
                 tableOutput.style.display = 'block';
                 tbody.innerHTML = '';
                 if(data.length === 0){
-                    tableOutput.innerHTML = 'No results founds';
+                    noResult.innerHTML = 'No results founds';
+                    noResult.style.display = 'block';
+                    tableOutput.style.display = 'none';
                 }
                 else{
                     data.forEach((item) => {
@@ -43,6 +46,7 @@ $("#searchField").on('keyup', function(e){
         });
     }
     else{
+        noResult.style.display = 'none'
         tableOutput.style.display = 'none';
         appTable.style.display = 'block';
         paginationContainer.style.display = 'block';
