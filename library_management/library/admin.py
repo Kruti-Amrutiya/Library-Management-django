@@ -14,7 +14,7 @@ admin.site.register(Category)
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('role', 'username', 'first_name', 'last_name', 'password', 'address', 'phone_num', 'profile_img', 'department')
+    list_display = ('role', 'username', 'first_name', 'last_name', 'email', 'password', 'address', 'phone_num', 'profile_img', 'department')
     ordering = ('username',)
     search_fields = ("username",)
 

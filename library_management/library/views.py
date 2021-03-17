@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
-from .models import Book, BookRecord, User, Role
+from library.models import Book, BookRecord, User, Role
 from library.forms import UserSignupForm, BookForm, BookUpdateForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.views.generic.list import ListView
@@ -32,13 +32,11 @@ class UserSignupView(View):
             message = 'Hope you are enjoying your Django Project'
             recepient = str(form['email'].value())
             send_mail(subject, message, EMAIL_HOST_USER, [recepient], fail_silently=False)
-            form1 = form.save(commit=False)
-            form1.save()
-            return render(request, 'library/userprofile.html', {'user': user})
+            form.save()
+            return HttpResponseRedirect('/login')
         else:
             print(form.errors)
-            messages.error(request, 'Username already exist!!')
-            return HttpResponseRedirect('/signup')
+            return render(request, 'library/signup.html', {'form': UserSignupForm()})
 
 
 # Username validation
@@ -60,7 +58,6 @@ class LoginView(View):
         uname = request.POST.get('username')
         upass = request.POST.get('password')
         user = auth.authenticate(request, username=uname, password=upass)
-        print(user.id)
         if user is not None:
             auth.login(request, user)
             if user.role.role == 'Admin':
@@ -96,21 +93,7 @@ class ViewTotalIssuedBooks(LoginRequiredMixin, View):
     def get(self, request):
         user = User.objects.get(username=request.user)
         book_records = BookRecord.objects.filter(user=user)
-        # book_records = BookRecord.objects.all()
         return render(request, 'library/issuedbooks.html', {'book_records': book_records})
-
-
-class ViewIssuedBooks(LoginRequiredMixin, View):
-    def get(self, request):
-        user = User.objects.get(username=request.user)
-        book_records = BookRecord.objects.filter(user=user)
-        return render(request, 'library/issuedbooks.html', {'book_records': book_records})
-
-
-class ViewIssuedBooksRequest(LoginRequiredMixin, View):
-    def get(self, request):
-        books = Book.objects.all()
-        return render(request, 'library/issuebook.html', {'books': books})
 
 
 # Class for issue book from library

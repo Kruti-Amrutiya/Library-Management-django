@@ -31,8 +31,6 @@ urlpatterns = [
     path('bookdelete/<int:id>', views.BookDeleteView.as_view(), name='bookdelete'),
 
     path('viewtotalissuedbooks/', views.ViewTotalIssuedBooks.as_view(), name='viewtotalissuedbooks'),
-    path('viewissuedbooks/', views.ViewIssuedBooks.as_view(), name='viewissuedbooks'),
-    path('viewissuedbooksrequest/', views.ViewIssuedBooksRequest.as_view(), name='viewissuedbooksrequest'),
     path('bookrecord/<int:id>/', views.BookIssueView.as_view(), name='bookrecord'),
     path('bookreturn/<int:id>/', views.BookReturnView.as_view(), name='bookreturn'),
 ]
