@@ -1,11 +1,11 @@
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
-from library.models import Book, BookRecord, User, Role
+from library.models import Book, BookRecord, User, Role, Student, Faculty, Librarian, Admin
 from library.forms import UserSignupForm, BookForm, BookUpdateForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.views.generic.list import ListView
 from django.views import View
 from django.contrib import messages, auth
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from library_management.settings import EMAIL_HOST_USER
 from django.core.mail import send_mail
@@ -28,12 +28,31 @@ class UserSignupView(View):
     def post(self, request):
         form = UserSignupForm(request.POST, request.FILES)
         if form.is_valid():
-            subject = 'Welcome to Library Management System'
-            message = 'Hope you are enjoying your Django Project'
-            recepient = str(form['email'].value())
-            send_mail(subject, message, EMAIL_HOST_USER, [recepient], fail_silently=False)
-            form.save()
-            return HttpResponseRedirect('/login')
+            # subject = 'Welcome to Library Management System'
+            # message = 'Thank you for registration in Library Management System!!!'
+            # recepient = str(form['email'].value())
+            # send_mail(subject, message, EMAIL_HOST_USER, [recepient], fail_silently=False)
+            user = form.save()
+
+            if form.cleaned_data['role'].role == 'Admin':
+                Admin.objects.create(user=user)
+            elif form.cleaned_data['role'].role == 'Student':
+                Student.objects.create(user=user)
+            elif form.cleaned_data['role'].role == 'Faculty':
+                Faculty.objects.create(user=user)
+            elif form.cleaned_data['role'].role == 'Librarian':
+                Librarian.objects.create(user=user)
+            else:
+                return render(request, 'library/userprofile.html', {'user': user})
+
+            # user login
+            login(request, user)
+
+            # login for specific user
+            if Role == 'Admin':
+                return HttpResponseRedirect('/adminprofile')
+            else:
+                return render(request, 'library/userprofile.html', {'user': user})
         else:
             print(form.errors)
             return render(request, 'library/signup.html', {'form': UserSignupForm()})
