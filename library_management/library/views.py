@@ -17,6 +17,8 @@ import datetime
 # Home Page
 class home_view(View):
     def get(self, request):
+        # to understand the concept of managers
+        # return render(request, 'library/index.html', {'user': User.users.get_stu_id_range(3, 6)})
         return render(request, 'library/index.html')
 
 
@@ -85,6 +87,7 @@ class LoginView(View):
                 return render(request, 'library/userprofile.html', {'user': user})
         else:
             messages.info(request, 'Invalid username or password', extra_tags='alert')
+            messages.warning(request, ('The confirmation link was invalid, possibly because it has already been used.'))
 
 
 # User LogOut
@@ -178,6 +181,18 @@ class SearchBox(LoginRequiredMixin, View):
             }
             context.append(details)
         return JsonResponse(context, safe=False)
+
+
+# Autocomplete view for search any book
+class AutoCompleteView(LoginRequiredMixin, View):
+    def get(self, request):
+        if 'term' in request.GET:
+            book_records = BookRecord.objects.filter(book__title__icontains=request.GET.get('term'))
+            titles = list()
+
+            for books in book_records:
+                titles.append(books.book.title) 
+            return JsonResponse(titles, safe=False)
 
 
 # Student List View in admin dashboard
