@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.db.models import Q
 import datetime
+from .tasks import sleepy, send_email_task
 
 
 # Home Page
@@ -28,10 +29,12 @@ class UserSignupView(View):
     def post(self, request):
         form = UserSignupForm(request.POST, request.FILES)
         if form.is_valid():
-            subject = 'Welcome to Library Management System'
-            message = 'Hope you are enjoying your Django Project'
-            recepient = str(form['email'].value())
-            send_mail(subject, message, EMAIL_HOST_USER, [recepient], fail_silently=False)
+            sleepy.delay(10)
+            # subject = 'Welcome to Library Management System'
+            # message = 'Hope you are enjoying your Django Project'
+            # recepient = str(form['email'].value())
+            # send_mail(subject, message, EMAIL_HOST_USER, [recepient], fail_silently=False)
+            send_email_task.delay()
             form.save()
             return HttpResponseRedirect('/login')
         else:
