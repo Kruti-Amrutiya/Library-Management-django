@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+  <style media="screen">
+  .btn-circle.btn-xl {
+    width: 70px;
+    height: 70px;
+    padding: 10px 16px;
+    border-radius: 35px;
+    font-size: 24px;
+    line-height: 1.33;
+  }
+  .btn-circle {
+    width: 30px;
+    height: 30px;
+    padding: 6px 0px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.42857;
+  }
+  .jumbotron{
+    margin-top: 0px;
+    margin-bottom: 0px;
+    text-align: center;
+  }
+  .jumbotron h1{
+    text-align: center;
+  }
+  </style>
+  </head>
+  <body>
+    {% include "library/base.html" %}
+    <br>
+    <br>
+    <center><h3 style="margin-bottom: 0px;" class ='alert alert-success'>Welcome to Online library!</h3></center>
+    <div class="container img jumbotron" style="margin-top: 12rem;">
+    <div class="card mb-4" style="max-width: 1000px; margin-left: 40px; margin-top: 10px;">
+        <div class="row no-gutters">
+          <div class="col-md-4">
+            <img src="{{faculty.profile_img.url}}" class="card-img" alt="book image" style="width: 200px; margin-top: 35px;">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+                <h2 class="card-title">Faculty Detail</h2>
+                <h4 class="card-title">Hello {{faculty}}!</h4>
+                <h4 class="card-title">Username: {{faculty.username}}</h4>
+                <h4 class="card-title">First_Name: {{faculty.first_name}}</h4>
+                <h4 class="card-title">Last_Name: {{faculty.last_name}}</h4>
+                <h4 class="card-title">Role: {{faculty.role.role}}</h4>
+                <h4 class="card-title">Phone_num: {{faculty.phone_num}}</h4>
+            </div>
+          </div>
+        </div>
+    </div>
+    </div>
+  </body>
+</html>

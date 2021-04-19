@@ -1,0 +1,68 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+  <style media="screen">
+  .btn-circle.btn-xl {
+    width: 70px;
+    height: 70px;
+    padding: 10px 16px;
+    border-radius: 35px;
+    font-size: 24px;
+    line-height: 1.33;
+  }
+  .btn-circle {
+    width: 30px;
+    height: 30px;
+    padding: 6px 0px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.42857;
+  }
+  .jumbotron{
+    margin-top: 0px;
+    margin-bottom: 0px;
+    text-align: center;
+  }
+  .jumbotron h1{
+    text-align: center;
+  }
+  </style>
+  </head>
+  <body>
+    {% include "library/base.html" %}
+    <br>
+    <br>
+    <center><h3 style="margin-bottom: 0px;" class ='alert alert-success'>Welcome to Online library!</h3></center>
+    <div class="container img jumbotron" style="margin-top: 12rem;">
+    <div class="card mb-4" style="max-width: 1000px; margin-left: 40px; margin-top: 10px;">
+        <div class="row no-gutters">
+          <div class="col-md-4">
+            <img src="{{book.book_img.url}}" class="card-img" alt="book image" style="width: 200px; margin-top: 30px;">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+                <h2 class="card-title">Book Detail</h2>
+                <h4 class="card-title">Title: {{book.title}}</h4>
+                <h4 class="card-title">Author: {{book.author}}</h4>
+                <h4 class="card-title">Category: {{book.category}}</h4>
+                <h4 class="card-title">Total_copies_of_books:<span id="id_total_copies_of_books">{{book.total_copies_of_books}}</span></h4>
+                <button id="decrement" class="btn btn-primary btn-sg">-</button>
+                <button id="increment" class="btn btn-primary btn-sg">+</button>
+                <h4 class="card-title">Available_copies_of_books:<span id="id_available_copies_of_books">{{book.available_copies_of_books}}</span></h4>
+            </div>
+          </div>
+        </div>
+    </div>
+    </div>
+  </body>
+  {% block javascript %}
+  <script>
+    var template = {
+        book_id: {{book.id}},
+        csrf_token: '{{csrf_token}}',
+    }
+  </script>
+  <script type="text/javascript" src="{% static 'js/incrementDecrementBook.js' %}"></script> 
+  {% endblock %}
+</html>

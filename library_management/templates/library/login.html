@@ -3,25 +3,34 @@
 {% load admin_urls %}
 
 {% block content %}
-<form action="" method="post" autocomplete="off" enctype="multipart/form-data">
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% csrf_token %}
-    {{form.username|as_crispy_field}}
-    {{form.password|as_crispy_field}}
-    <div class="row">
-        <div class="col-md-12">
-            <button type="submit" class="btn btn-success btn-block btn-lg">Login</button>
+<div class="container" style="padding-top: 95px; padding-right: 95px;">
+    <div class="col-md-15 offset-md-1 mt-10">
+        <div class="jumbotron">
+            <h1 class="display-4">User Login Form</h1>
+            <p class="lead font-bold">Library Management System</p>
+            <hr class="my-4">
+            <form action="" method="post" autocomplete="off" enctype="multipart/form-data">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% csrf_token %}
+                {{form.username|as_crispy_field}}
+                {{form.password|as_crispy_field}}
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-success btn-block btn-lg">Login</button>
+                    </div>
+                </div>
+                <br><br>
+                <div class="card-footer text-muted text-center">
+                    New User? <a href="{% url 'signup' %}">Sign up</a>
+                  </div>
+            </form>
         </div>
-    </div>
-    <br><br>
-    <div class="card-footer text-muted text-center">
-		New User? <a href="{% url 'signup' %}">Sign up</a>
-	  </div>
-</form>
+    </div>  
+</div>
 {% endblock content %}

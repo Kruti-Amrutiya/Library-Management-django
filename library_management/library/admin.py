@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Student, Faculty, Librarian, Book, BookRecord, Role, Department, Category
+from .models import User, Student, Faculty, Librarian, Book, BookRecord, Role, Department, Category, Admin
 
 admin.site.site_header = 'Library admin'
 
@@ -7,6 +7,7 @@ admin.site.site_header = 'Library admin'
 admin.site.register(Student)
 admin.site.register(Faculty)
 admin.site.register(Librarian)
+admin.site.register(Admin)
 admin.site.register(Role)
 admin.site.register(Department)
 admin.site.register(Category)
@@ -14,7 +15,7 @@ admin.site.register(Category)
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('role', 'username', 'first_name', 'last_name', 'password', 'address', 'phone_num', 'profile_img', 'department')
+    list_display = ('role', 'username', 'first_name', 'last_name', 'email', 'password', 'address', 'phone_num', 'profile_img', 'department')
     ordering = ('username',)
     search_fields = ("username",)
 

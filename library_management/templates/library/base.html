@@ -1,12 +1,17 @@
-{% load static %}<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>User Register</title>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <link href="https://fonts.googleapis.com/css2?family=Potta+One&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-book-half" viewBox="0 0 16 16">
+            <path d="M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/>
+          </svg>
         <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
         <link rel="stylesheet" href="{% static 'css/app.css' %}"
         {% block stylesheet %}{% endblock %}
@@ -22,6 +27,16 @@
             </button>
             <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                 <div class="navbar-nav">
+                    <a href="/" class="nav-item nav-link active">Home</a>
+                        <div class="nav-item dropdown">
+                          <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">User</a>
+                          <div class="dropdown-menu">
+                            <a href="{% url 'signup' %}" class="dropdown-item">Faculty</a>
+                            <a href="{% url 'signup' %}" class="dropdown-item">Student</a>
+                            <a href="{% url 'signup' %}" class="dropdown-item">Librarian</a>
+                            <a href="{% url 'login' %}" class="dropdown-item">Admin</a>
+                          </div>
+                        </div>
                 <div class="collapse navbar-collapse" id="mainMenu">
                     {% if user.is_authenticated %}
                       <ul class="navbar-nav ml-auto">
@@ -30,7 +45,28 @@
                             {{ user.username }}
                           </a>
                           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                                  <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+                                {% if user.is_superuser %}
+                                    <a class="dropdown-item" href="{% url 'adminprofile' %}">Profile</a>
+                                    <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+                                {% endif %}
+                                {% if user.role.role == 'Student' %}
+                                    <a class="dropdown-item" href="{% url 'userprofile' user.id %}">Profile</a>
+                                    <a class="dropdown-item" href="{% url 'booklist' %}">Issue New Book</a>
+                                    <a class="dropdown-item" href="{% url 'viewtotalissuedbooks' %}">View Issued books</a>
+                                    <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+                                {% endif %}
+                                {% if user.role.role == 'Faculty' %}
+                                    <a class="dropdown-item" href="{% url 'userprofile' user.id %}">Profile</a>
+                                    <a class="dropdown-item" href="{% url 'booklist' %}">Issue New Book</a>
+                                    <a class="dropdown-item" href="{% url 'viewtotalissuedbooks' %}">View Issued books</a>
+                                    <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+                                {% endif %}
+                                {% if user.role.role == 'Librarian' %}
+                                    <a class="dropdown-item" href="{% url 'userprofile' user.id %}">Profile</a>
+                                    <a class="dropdown-item" href="{% url 'booklist' %}">Issue New Book</a>
+                                    <a class="dropdown-item" href="{% url 'viewtotalissuedbooks' %}">View Issued books</a>
+                                    <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+                                {% endif %}
                             </div>
                         </li>
                       </ul>
@@ -45,17 +81,8 @@
             </div>
         </div>
         </nav>
-        <div class="container">
-            <div class="col-md-15 offset-md-1 mt-10">
-                <div class="jumbotron">
-                    <h1 class="display-4">User Form</h1>
-                    <p class="lead font-bold">Library Management System</p>
-                    <hr class="my-4">
-                    {% block content %}
-                    {% endblock content %}
-                </div>
-            </div>  
-        </div>
+        {% block content %}
+        {% endblock content %}
          <script>
             function changeStatus(){
                 var status = document.getElementById("id_role");
@@ -67,23 +94,21 @@
                 }
             }
         </script>
-        <!-- <script type="text/javascript"> 
-            window.history.forward(); 
-            function noBack() { 
-                window.history.forward(); 
-            } 
-        </script>  -->
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.bundle.min.js" integrity="sha384-BOsAfwzjNJHrJ8cZidOg56tcQWfp6y72vEJ8xQ9w6Quywb24iOsW913URv1IS4GD" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
             integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
             crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
             integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
             crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
             integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous"></script>   
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         </div> 
         {% endblock body %}
+        {% block javascript %}{% endblock %}
     </body>
 </html>

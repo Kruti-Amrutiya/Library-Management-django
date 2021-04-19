@@ -1,0 +1,52 @@
+{% extends "library/base.html" %}
+{% block content %}
+<div class="container" style="padding-top: 95px; padding-right: 95px;">
+    <div class="col-md-15 offset-md-1 mt-10">
+        <div class="jumbotron">
+            <h1 class="display-4">User Login Form</h1>
+            <p class="lead font-bold">Library Management System</p>
+            <hr class="my-4">
+            <table class="table table-bordered table-hover table-striped table-responsive table-dark" style="text-align: center;">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                <thead class="border-bottom font-weight-bold">
+                    <tr>
+                        <td>BookName</td>
+                        <td>Book_Img</td>
+                        <td>Issue_Date</td>
+                        <td>Due_Date</td>
+                        <td>Return_Date</td>
+                        <td>Status</td>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for book_record in book_records %}
+                    <tr>
+                        <td>{{book_record.book.title}}</td>
+                        <td><img style="width: 90px; height: 90px;" src="{{book_record.book.book_img.url}}" alt="{{ book.title }}"></td>
+                        <td>{{book_record.issue_date}}</td>
+                        <td>{{book_record.due_date}}</td>
+                        {% if book_record.return_date is None %}
+                            <td>-</td>
+                            <td>
+                                <form action="{% url 'bookreturn' book_record.id %}" method="POST" class="d-inline">
+                                {% csrf_token %}
+                                    <button type="submit" class="btn text-primary px-2">Return</button>
+                                </form>
+                            </td>
+                        {% else %}
+                            <td>{{book_record.return_date}}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %} 

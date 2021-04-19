@@ -1,0 +1,69 @@
+{% extends "library/base.html" %}
+{% block content %}
+<table class="table table-bordered table-hover table-striped table-responsive table-dark" style="text-align: center;">
+    <table class="table table-bordered table-hover table-striped table-dark">
+        <thead class="border-bottom font-weight-bold">
+            <tr>
+                <td>Title</td>
+                <td>Author</td>
+                <td>Category</td>
+                <td>Book Img</td>
+                <td>Total books</td>
+                <td>Available books</td>
+                <td>
+                    {% if user.role.role == 'Admin' %}
+                        <a href="{% url 'bookadd' %}" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-plus"></i> Add New
+                        </a>
+                    {% else %}
+                        Status
+                    {% endif %}
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for book in object_list %}
+            <tr>
+                <td><a href="{% url 'bookdetail' book.id %}">{{book.title}}</a></td>
+                <td>{{book.author}}</td>
+                <td>{{book.category}}</td>
+                <td><img style="width: 90px; height: 90px;" src="{{book.book_img.url}}" alt="{{ book.title }}"></td>
+                <td>{{book.total_copies_of_books}}</td>
+                <td>{{book.available_copies_of_books}}</td>
+                <td>
+                    {% if user.role.role == 'Admin' %}
+                    <a href="{% url 'bookupdate' book.id %}" class="btn text-warning px-2">
+                        <i class="far fa-edit fa-lg"></i>
+                    </a>
+                    <form action="{% url 'bookdelete' book.id %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn">
+                            <i class="far fa-trash-alt fa-lg text-danger float-right"></i>
+                        </button>
+                    </form>
+                    {% else %}
+                    <form action="#" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn text-warning px-2">Confirm</button>
+                        <button type="submit" class="btn text-warning px-2">Cancel</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if is_paginated %}
+        <nav aria-label="Page navigation conatiner"></nav>
+        <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li><a href="?page={{ page_obj.previous_page_number }}" class="page-link">&laquo; PREV </a></li>
+        {% endif %}
+        {% if page_obj.has_next %}
+        <li><a href="?page={{ page_obj.next_page_number }}" class="page-link"> NEXT &raquo;</a></li>
+        {% endif %}
+        </ul>
+        </nav>
+        </div>
+    {% endif %}
+{% endblock content %}
