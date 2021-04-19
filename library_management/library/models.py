@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
 import datetime
+from library.managers import CustomManager
 
 
 # Create your models here.
@@ -39,6 +40,9 @@ class User(AbstractUser):
     phone_num = PhoneNumberField(null=True, blank=True, unique=True)
     profile_img = models.ImageField(blank=True, upload_to='profile_image/', null=True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True, related_name='mydepartment')
+
+    # objects = models.Manager()
+    # users = CustomManager()
 
 
 class Student(models.Model):

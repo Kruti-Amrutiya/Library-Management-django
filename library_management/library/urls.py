@@ -22,6 +22,7 @@ urlpatterns = [
     path('librarianlist/', views.LibrarianListView.as_view(), name='librarianlist'),
     path('librariandetail/<int:id>/', views.LibrarianDetailView.as_view(), name='librariandetail'),
 
+    path('autocompletesearch/', views.AutoCompleteView.as_view(), name='autocompletesearch'),
     path('searchbox/', csrf_exempt(views.SearchBox.as_view()), name='searchbox'),
     path('copies_of_books/', views.CopiesOfBooks.as_view(), name='copies_of_books'),
     path('booklist', views.BookListView.as_view(), name='booklist'),
