@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.db.models import Q
 import datetime
+from .tasks import sleepy, send_email_task
 
 
 # Home Page
